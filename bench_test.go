@@ -246,6 +246,12 @@ func BenchmarkMartini_Param(b *testing.B) {
 	r, _ := http.NewRequest("GET", "/user/gordon", nil)
 	benchRequest(b, router, r)
 }
+func BenchmarkNikandMux_Param(b *testing.B) {
+	router := loadNikandMuxSingle("GET", "/user/:name", nikandMuxHandle)
+
+	r, _ := http.NewRequest("GET", "/user/gordon", nil)
+	benchRequest(b, router, r)
+}
 func BenchmarkPat_Param(b *testing.B) {
 	router := loadPatSingle("GET", "/user/:name", http.HandlerFunc(httpHandlerFunc))
 
@@ -452,6 +458,12 @@ func BenchmarkMacaron_Param5(b *testing.B) {
 }
 func BenchmarkMartini_Param5(b *testing.B) {
 	router := loadMartiniSingle("GET", fiveColon, martiniHandler)
+
+	r, _ := http.NewRequest("GET", fiveRoute, nil)
+	benchRequest(b, router, r)
+}
+func BenchmarkNikandMux_Param5(b *testing.B) {
+	router := loadNikandMuxSingle("GET", fiveColon, nikandMuxHandle)
 
 	r, _ := http.NewRequest("GET", fiveRoute, nil)
 	benchRequest(b, router, r)
@@ -666,6 +678,12 @@ func BenchmarkMartini_Param20(b *testing.B) {
 	r, _ := http.NewRequest("GET", twentyRoute, nil)
 	benchRequest(b, router, r)
 }
+func BenchmarkNikandMux_Param20(b *testing.B) {
+	router := loadNikandMuxSingle("GET", twentyColon, nikandMuxHandle)
+
+	r, _ := http.NewRequest("GET", twentyRoute, nil)
+	benchRequest(b, router, r)
+}
 func BenchmarkPat_Param20(b *testing.B) {
 	router := loadPatSingle("GET", twentyColon, http.HandlerFunc(httpHandlerFunc))
 
@@ -868,6 +886,12 @@ func BenchmarkMacaron_ParamWrite(b *testing.B) {
 }
 func BenchmarkMartini_ParamWrite(b *testing.B) {
 	router := loadMartiniSingle("GET", "/user/:name", martiniHandlerWrite)
+
+	r, _ := http.NewRequest("GET", "/user/gordon", nil)
+	benchRequest(b, router, r)
+}
+func BenchmarkNikandMux_ParamWrite(b *testing.B) {
+	router := loadNikandMuxSingle("GET", "/user/:name", nikandMuxHandleWrite)
 
 	r, _ := http.NewRequest("GET", "/user/gordon", nil)
 	benchRequest(b, router, r)

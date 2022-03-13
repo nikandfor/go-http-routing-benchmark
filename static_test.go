@@ -195,6 +195,7 @@ var (
 	staticLARS            http.Handler
 	staticMacaron         http.Handler
 	staticMartini         http.Handler
+	staticNikandMux       http.Handler
 	staticPat             http.Handler
 	staticPossum          http.Handler
 	staticR2router        http.Handler
@@ -205,6 +206,8 @@ var (
 	staticTraffic    http.Handler
 	staticVulcan     http.Handler
 	// staticZeus        http.Handler
+
+	staticCompare http.Handler
 )
 
 func init() {
@@ -287,6 +290,9 @@ func init() {
 	calcMem("Martini", func() {
 		staticMartini = loadMartini(staticRoutes)
 	})
+	calcMem("NikandMux", func() {
+		staticNikandMux = loadNikandMux(staticRoutes)
+	})
 	calcMem("Pat", func() {
 		staticPat = loadPat(staticRoutes)
 	})
@@ -317,6 +323,10 @@ func init() {
 	// calcMem("Zeus", func() {
 	// 	staticZeus = loadZeus(staticRoutes)
 	// })
+
+	calcMem("COMPARE", func() {
+		staticCompare = loadCompare(staticRoutes)
+	})
 
 	println()
 }
@@ -381,7 +391,7 @@ func BenchmarkHttpRouter_StaticAll(b *testing.B) {
 	benchRoutes(b, staticHttpRouter, staticRoutes)
 }
 func BenchmarkHttpTreeMux_StaticAll(b *testing.B) {
-	benchRoutes(b, staticHttpRouter, staticRoutes)
+	benchRoutes(b, staticHttpTreeMux, staticRoutes)
 }
 func BenchmarkKocha_StaticAll(b *testing.B) {
 	benchRoutes(b, staticKocha, staticRoutes)
@@ -394,6 +404,9 @@ func BenchmarkMacaron_StaticAll(b *testing.B) {
 }
 func BenchmarkMartini_StaticAll(b *testing.B) {
 	benchRoutes(b, staticMartini, staticRoutes)
+}
+func BenchmarkNikandMux_StaticAll(b *testing.B) {
+	benchRoutes(b, staticNikandMux, staticRoutes)
 }
 func BenchmarkPat_StaticAll(b *testing.B) {
 	benchRoutes(b, staticPat, staticRoutes)
@@ -427,3 +440,7 @@ func BenchmarkVulcan_StaticAll(b *testing.B) {
 // func BenchmarkZeus_StaticAll(b *testing.B) {
 // 	benchRoutes(b, staticZeus, staticRoutes)
 // }
+
+func BenchmarkCOMPARE_StaticAll(b *testing.B) {
+	benchRoutes(b, staticCompare, staticRoutes)
+}

@@ -45,6 +45,7 @@ import (
 	"github.com/naoina/denco"
 	urlrouter "github.com/naoina/kocha-urlrouter"
 	_ "github.com/naoina/kocha-urlrouter/doublearray"
+	nikandmux "github.com/nikandfor/mux"
 	"github.com/pilu/traffic"
 	"github.com/plimble/ace"
 	"github.com/rcrowley/go-tigertonic"
@@ -1192,6 +1193,38 @@ func loadMartiniSingle(method, path string, handler interface{}) http.Handler {
 	return martini
 }
 
+// NikandMux
+func nikandMuxHandle(c *nikandmux.Context) error { return nil }
+
+func nikandMuxHandleWrite(c *nikandmux.Context) error {
+	io.WriteString(c, c.Param("name"))
+	return nil
+}
+
+func nikandMuxHandlerTest(c *nikandmux.Context) error {
+	io.WriteString(c, c.Request.RequestURI)
+	return nil
+}
+
+func loadNikandMux(routes []route) http.Handler {
+	h := nikandMuxHandle
+	if loadTestHandler {
+		h = nikandMuxHandlerTest
+	}
+
+	router := nikandmux.New()
+	for _, route := range routes {
+		router.Handle(route.method, route.path, h)
+	}
+	return router
+}
+
+func loadNikandMuxSingle(method, path string, handle nikandmux.HandlerFunc) http.Handler {
+	router := nikandmux.New()
+	router.Handle(method, path, handle)
+	return router
+}
+
 // pat
 func patHandlerWrite(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, r.URL.Query().Get(":name"))
@@ -1656,6 +1689,33 @@ func loadVulcanSingle(method, path string, handler http.HandlerFunc) http.Handle
 // 	}
 // 	return m
 // }
+
+func loadCompare(routes []route) http.Handler {
+	h1 := httpRouterHandle
+	if loadTestHandler {
+		h1 = httpRouterHandleTest
+	}
+
+	h2 := nikandMuxHandle
+	if loadTestHandler {
+		h2 = nikandMuxHandlerTest
+	}
+
+	router1 := httprouter.New()
+	for _, route := range routes {
+		router1.Handle(route.method, route.path, h1)
+	}
+
+	router2 := nikandmux.New()
+	for _, route := range routes {
+		router2.Handle(route.method, route.path, h2)
+	}
+
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		router1.ServeHTTP(w, req)
+		router2.ServeHTTP(w, req)
+	})
+}
 
 // Usage notice
 func main() {
